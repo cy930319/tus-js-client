@@ -301,12 +301,11 @@ var Upload = function () {
 
   }, {
     key: "_setupXHR",
-    value: function _setupXHR(xhr) {
+    value: function _setupXHR(xhr,method) {
       this._xhr = xhr;
 
       xhr.setRequestHeader("Tus-Resumable", "1.0.0");
-      var headers = this.options.headers;
-
+      var headers = this.options.getHeaders(method);
       for (var name in headers) {
         xhr.setRequestHeader(name, headers[name]);
       }
@@ -356,7 +355,7 @@ var Upload = function () {
         _this2._emitXhrError(xhr, new Error("tus: failed to create upload"), err);
       };
 
-      this._setupXHR(xhr);
+      this._setupXHR(xhr,'POST');
       xhr.setRequestHeader("Upload-Length", this._size);
 
       // Add metadata if values have been added
@@ -436,7 +435,7 @@ var Upload = function () {
         _this3._emitXhrError(xhr, new Error("tus: failed to resume upload"), err);
       };
 
-      this._setupXHR(xhr);
+      this._setupXHR(xhr,'HEAD');
       xhr.send(null);
     }
 
@@ -519,7 +518,7 @@ var Upload = function () {
         };
       }
 
-      this._setupXHR(xhr);
+      this._setupXHR(xhr,'PATCH');
 
       xhr.setRequestHeader("Upload-Offset", this._offset);
       xhr.setRequestHeader("Content-Type", "application/offset+octet-stream");
